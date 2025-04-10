@@ -7,11 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Task {
-  id        Int     @id @default(autoincrement())
-  descricao String
-  concluida Boolean @default(false)
-  criadaEm  DateTime @default(now())
+model Produto {
+  id        Int      @id @default(autoincrement())
+  name      String
+  price     Float
+  category  String
+  brand     String
+  stock     Int
+  imageUrl  String
+  isActive  Boolean 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("tasks")
+  @@map("produtos")
 }
