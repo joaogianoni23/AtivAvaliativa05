@@ -13,34 +13,43 @@ class TarefaModel {
     });
   };
 
-  update = async (id, concluida, descricao) => {
+  update = async (id, concluida) => {
     try {
-      const tarefa = await prisma.task.update({
+      return await prisma.task.update({
         where: { id },
         data: {
           concluida: concluida !== undefined ? concluida : true,
-          descricao,
         },
       });
-
-      return tarefa;
     } catch (error) {
-      console.log("Error", error);
+      // Se a tarefa não for encontrada, o Prisma lançará uma exceção
+      if (error.code === "P2025") {
+        return null;
+      }
       throw error;
     }
   };
 
   delete = async (id) => {
     try {
-      const tarefaDeletada = await prisma.task.delete({
+      await prisma.task.delete({
         where: { id },
       });
-
-      return tarefaDeletada;
+      return true;
     } catch (error) {
-      console.log("Erro ao deletar a tarefa!", error);
+      // Se a tarefa não for encontrada, o Prisma lançará uma exceção
+      if (error.code === "P2025") {
+        return false;
+      }
       throw error;
     }
   };
+
+  getById = async (id) => {
+    return await prisma.task.findUnique({
+      where: { id },
+    });
+  };
 }
+
 export default new TarefaModel();

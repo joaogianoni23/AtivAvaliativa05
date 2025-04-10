@@ -13,12 +13,10 @@ class TarefaController {
 
   create = async (req, res) => {
     const { descricao } = req.body;
-    // const descricao = req.body.descricao;
     try {
       if (!descricao) {
         return res.status(400).json({ erro: "Descrição é obrigatória" });
       }
-
       const novaTarefa = await tarefaModel.create(descricao);
       res.status(201).json(novaTarefa);
     } catch (error) {
@@ -29,23 +27,22 @@ class TarefaController {
 
   update = async (req, res) => {
     const { id } = req.params;
-    const { concluida, descricao } = req.body;
+    const { concluida } = req.body;
 
     try {
       const tarefaAtualizada = await tarefaModel.update(
-        Number(id),
-        concluida,
-        descricao
+        parseInt(id),
+        concluida
       );
 
       if (!tarefaAtualizada) {
-        return res.status(404).json({ erro: "Tarefa não encontrada!" });
+        return res.status(404).json({ erro: "Tarefa não encontrada" });
       }
 
       res.json(tarefaAtualizada);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ erro: "Erro ao atualizar tarefa!" });
+      res.status(500).json({ erro: "Erro ao atualizar tarefa" });
     }
   };
 
@@ -53,17 +50,35 @@ class TarefaController {
     const { id } = req.params;
 
     try {
-      const sucesso = await tarefaModel.delete(Number(id));
+      const sucesso = await tarefaModel.delete(parseInt(id));
 
       if (!sucesso) {
         return res.status(404).json({ erro: "Tarefa não encontrada" });
       }
 
-      res.status(200).send({ message: "Tarefa deletada com sucesso!" });
+      res.status(204).send();
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Erro ao excluir tarefa!" });
+      res.status(500).json({ erro: "Erro ao excluir tarefa" });
+    }
+  };
+
+  getById = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const tarefa = await tarefaModel.getById(parseInt(id));
+
+      if (!tarefa) {
+        return res.status(404).json({ erro: "Tarefa não encontrada" });
+      }
+
+      res.json(tarefa);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ erro: "Erro ao buscar tarefa" });
     }
   };
 }
+
 export default new TarefaController();
